@@ -1,0 +1,24 @@
+sudo service mongodb start
+
+hotel.name = req.body.name
+hotel.address = req.body.address
+hotel.latitude = req.body.latitude
+hotel.longitude = req.body.longitude
+hotel.state = req.body.state
+hotel.phone = req.body.phone
+hotel.fax = req.body.fax
+hotel.email = req.body.email
+hotel.website = req.body.website
+hotel.type = req.body.type
+hotel.room = req.body.room
+
+address: String,
+latitude: Number,
+longitude: Number,
+state: String,
+phone: Number,
+fax: Number,
+email: String,
+website: String,
+type: String,
+room: Number
