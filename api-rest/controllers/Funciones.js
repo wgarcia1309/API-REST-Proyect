@@ -1,13 +1,8 @@
 const Hotel = require('../models/Hotel')
-// mongoose.createCollection('Hotels', { validator: { Hotel } })
 
 function charge (res) {
   let jsonObj = require('../files/output.json')
   let hotels = new Hotel()
-  // hotels.collection.insert(jsonObj, { validator: { Hotel } }, (err) => {
-  //   if (err) res.status(500).send({ message: `Error al cargar la Base de datos ${err}` })
-  //   res.status(200).send({ message: 'Base de datos cargada con exito' })
-  // })
 
   jsonObj.forEach((hotel) => {
     hotels.collection.insertOne({
