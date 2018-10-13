@@ -17,4 +17,13 @@ const HotelSchema = Schema({
   size: String
 })
 
-module.exports = mongoose.model('Hotel', HotelSchema)
+const UserSchema = Schema({
+  email: String,
+  password: String,
+  name: String,
+  lastname: String,
+  address: String
+})
+let Hotel = mongoose.model('Hotel', HotelSchema)
+let User = mongoose.model('User', UserSchema)
+module.exports = { Hotel, User }

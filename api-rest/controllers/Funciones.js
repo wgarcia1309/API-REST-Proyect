@@ -1,8 +1,8 @@
-const Hotel = require('../models/Hotel')
+const Models = require('../models/Schema')
+const Hotel = new Models.Hotel()
 
 function charge (res) {
   let jsonObj = require('../files/output.json')
-  let hotels = new Hotel()
 
   jsonObj.forEach((hotel) => {
     let ro = hotel['Rooms']
@@ -12,7 +12,7 @@ function charge (res) {
       if (ro < 100) size = 'medium'
       else { size = 'large' }
     }
-    hotels.collection.insertOne({
+    Hotel.collection.insertOne({
       name: hotel['HOTEL NAME'],
       address: hotel['ADDRESS'],
       latitude: hotel['LATITUDE'],
