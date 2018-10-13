@@ -13,7 +13,8 @@ const HotelSchema = Schema({
   email: String,
   website: String,
   type: String,
-  room: { type: Number, required: true }
+  room: { type: Number, required: true },
+  size: String
 })
 
 module.exports = mongoose.model('Hotel', HotelSchema)

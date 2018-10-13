@@ -5,6 +5,13 @@ function charge (res) {
   let hotels = new Hotel()
 
   jsonObj.forEach((hotel) => {
+    let ro = hotel['Rooms']
+    let size
+    if (ro < 50) size = 'small'
+    else {
+      if (ro < 100) size = 'medium'
+      else { size = 'large' }
+    }
     hotels.collection.insertOne({
       name: hotel['HOTEL NAME'],
       address: hotel['ADDRESS'],
@@ -16,7 +23,8 @@ function charge (res) {
       email: hotel['EMAIL ID'],
       website: hotel['WEBSITE'],
       type: hotel['TYPE'],
-      room: hotel['Rooms']
+      room: hotel['Rooms'],
+      size: size
     })
   }
   )
