@@ -18,8 +18,8 @@ const HotelSchema = Schema({
 })
 
 const UserSchema = Schema({
-  email: String,
-  password: String,
+  email: { type: String, unique: true, lowercase: true },
+  password: { type: String, select: false },
   name: String,
   lastname: String,
   address: String

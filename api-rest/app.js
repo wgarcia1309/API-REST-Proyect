@@ -14,6 +14,11 @@ app.get('/api/xlsx2j', (req, res) => {
   func.xlsx2j(res)
 })
 
+// creacion de un nuevo usuario
+app.get('/api/new_user/:email-:password-:name-:lastname', (req, res) => {
+  // terminar
+})
+
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   func.Hotel.find({
     name: { $regex: req.params.name, $options: 'i' },
