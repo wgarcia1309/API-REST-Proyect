@@ -1,9 +1,7 @@
-const Models = require('../models/Schema')
-const Hotel = new Models.Hotel()
+const Hotel = require('../models/Schema').Hotel
 
 function charge (res) {
   let jsonObj = require('../files/output.json')
-
   jsonObj.forEach((hotel) => {
     let ro = hotel['Rooms']
     let size
