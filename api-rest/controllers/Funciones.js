@@ -1,5 +1,5 @@
 const Hotel = require('../models/Schema').Hotel
-
+const User = require('../models/Schema').User
 function charge (res) {
   let jsonObj = require('../files/output.json')
   jsonObj.forEach((hotel) => {
@@ -43,5 +43,6 @@ function xlsx2j (res) {
 module.exports = {
   charge,
   xlsx2j,
-  Hotel
+  Hotel,
+  User
 }

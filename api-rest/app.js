@@ -16,7 +16,16 @@ app.get('/api/xlsx2j', (req, res) => {
 
 // creacion de un nuevo usuario
 app.get('/api/new_user/:email-:password-:name-:lastname', (req, res) => {
-  // terminar
+  let user = new func.User()
+  user.email = req.params.email
+  user.password = req.params.password
+  user.name = req.params.name
+  user.lastname = req.params.lastname
+
+  user.save((err, User) => {
+    if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+    res.status(200).send({ _id: User['_id'] })
+  })
 })
 
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
