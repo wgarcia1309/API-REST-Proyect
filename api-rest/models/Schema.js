@@ -26,6 +26,13 @@ const UserSchema = Schema({
   address: String
 })
 
+const ReserveSchema = Schema({
+  hotelId: String,
+  userId: String,
+  sDate: Date,
+  fDate: Date
+})
+
 UserSchema.pre('save', function (next) {
   let user = this
   if (!user.isModified('password')) return next()
@@ -42,6 +49,21 @@ UserSchema.pre('save', function (next) {
   })
 })
 
+UserSchema.pre('update', function (next) {
+  let user = this
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) return next(err)
+
+    bcrypt.hash(user._update['password'], salt, null, (err, hash) => {
+      if (err) return next(err)
+
+      user._update['password'] = hash
+      next()
+    })
+  })
+})
+
 let Hotel = mongoose.model('Hotel', HotelSchema)
 let User = mongoose.model('User', UserSchema)
-module.exports = { Hotel, User }
+let Reserve = mongoose.model('Reserve', ReserveSchema)
+module.exports = { Hotel, User, Reserve }
