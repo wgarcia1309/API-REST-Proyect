@@ -27,10 +27,11 @@ const UserSchema = Schema({
 })
 
 const ReserveSchema = Schema({
-  hotelId: String,
-  userId: String,
+  hotel_id: String,
+  user_id: String,
   sDate: Date,
-  fDate: Date
+  fDate: Date,
+  nroom: Number
 })
 
 UserSchema.pre('save', function (next) {

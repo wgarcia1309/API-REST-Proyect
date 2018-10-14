@@ -40,33 +40,35 @@ app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
     res.status(200).send({ value: 1 })
   })
 })
-//Hacer una reservación
-app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
+
+//  Hacer una reservación
+app.post('/api/reserve/', (req, res) => {
   func.Hotel.find({
-    _id: req.params.hotel_id
+    _id: req.body.hotel_id
   }, (err, hotels) => {
     if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
-    if (hotels.length==0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
+    if (hotels.length === 0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
+    func.User.find({
+      _id: req.body.user_id
+    }, (err, users) => {
+      if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+      if (users.length === 0) return res.status(500).send({ message: `No existe un usuario con ese Id` })
+      // funcion para saber si se puede reservar o no
+      let reserve = new func.Reserve()
+      reserve.hotel_id = req.body.hotel_id
+      reserve.user_id = req.body.user_id
+      reserve.sDate = new Date(req.body.sdate)
+      reserve.fDate = new Date(req.body.fdate)
+      reserve.nroom = req.body.nroom
 
-    let reserve = new func.Reserve()
-    reserve.hotelId = req.params.hotel_id
-    reserve.userId = req.params.user_id
-    reserve.sDate = req.params.sdate
-    reserve.fDate = req.params.fdate
-
-<<<<<<< HEAD
-    reserve.save((err, Reserve) => {
-      if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
-      res.status(200).send({ _id: Reserve['_id'] })
+      reserve.save((err, Reserve) => {
+        if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+        res.status(200).send({ _id: Reserve['_id'] })
+      })
     })
-
   })
 })
 
-
-
-=======
->>>>>>> 5b2ab6055e4fcafa0d1d36cb084d674aac781a56
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   func.Hotel.find({
     name: { $regex: req.params.name, $options: 'i' },
@@ -79,12 +81,53 @@ app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   })
 })
 
-app.put('/api/HOTEL_NAME/:name', (req, res) => {
-
+// creacion de un hotel
+app.get('/api/new_hotel/:nam-:add-:lat-:lon-:state-:pho-:fax-:ema-:web-:typ-:room-:siz', (req, res) => {
+  let hotel = new func.Hotel()
+  hotel.name = req.params.nam
+  hotel.address = req.params.add
+  hotel.latitude = req.params.lat
+  hotel.longitude = req.params.lon
+  hotel.state = req.params.state
+  hotel.phone = req.params.pho
+  hotel.fax = req.params.fax
+  hotel.email = req.params.ema
+  hotel.website = req.params.web
+  hotel.type = req.params.typ
+  hotel.room = req.params.room
+  hotel.size = req.params.siz
+  hotel.save((err, Hotel) => {
+    if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+    res.status(200).send({ _id: Hotel['_id'] })
+  })
 })
 
-app.delete('/api/HOTEL_NAME/:name', (req, res) => {
+// Actualizacion de un hotel
+app.get('/api/update_hotel/:id-:htype-:rooms-:phone-:web-:email', (req, res) => {
+  let id = req.params.id
+  func.Hotel.update({ _id: id }, {
+    phone: req.params.phone,
+    email: req.params.email,
+    website: req.params.web,
+    type: req.params.htype,
+    room: req.params.rooms
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+    res.status(200).send({ 'value': 1 })
+  })
+})
 
+// Eliminacion de hotel
+app.get('/api/DEL_HOTEL/:id', (req, res) => {
+  let id = req.params.id
+  func.Hotel.deleteOne({
+    _id: id
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+    else res.status(200).send({ message: 'Hotel eliminado' })
+  })
 })
 
 module.exports = app
