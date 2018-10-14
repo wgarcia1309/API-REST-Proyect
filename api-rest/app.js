@@ -31,18 +31,15 @@ app.get('/api/new_user/:email-:password-:name-:lastname-:address', (req, res) =>
 
 // actualizacion de un usuario
 app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
-  let id=req.params.id;
-  func.User.update({_id:id}, {
-      password: req.params.newpassword,
-      address: req.params.newadd
+  func.User.update({ _id: req.params.id }, {
+    password: req.params.newpassword,
+    address: req.params.newadd
   }, (err, users) => {
-    if (err) return res.status(500).send({"value":0, message: `Error al realizar la peticion ${err}` })
-    res.status(200).send({"value":1})
+    if (err) return res.status(500).send({ value: 0, message: `Error al realizar la peticion ${err}` })
+    if (users.n === 0) return res.status(404).send({ value: 0, message: `File no found` })
+    res.status(200).send({ value: 1 })
   })
 })
-
-
-
 
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   func.Hotel.find({
