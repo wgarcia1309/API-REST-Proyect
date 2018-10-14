@@ -31,13 +31,34 @@ app.get('/api/new_user/:email-:password-:name-:lastname-:address', (req, res) =>
 
 // actualizacion de un usuario
 app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
-  let id = req.params.id
-  func.User.update({ _id: id }, {
+  func.User.update({ _id: req.params.id }, {
     password: req.params.newpassword,
     address: req.params.newadd
   }, (err, users) => {
-    if (err) return res.status(500).send({ 'value': 0, message: `Error al realizar la peticion ${err}` })
-    res.status(200).send({ 'value': 1 })
+    if (err) return res.status(500).send({ value: 0, message: `Error al realizar la peticion ${err}` })
+    if (users.n === 0) return res.status(404).send({ value: 0, message: `File no found` })
+    res.status(200).send({ value: 1 })
+  })
+})
+
+// Hacer una reservación
+app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
+  func.Hotel.find({
+    _id: req.params.hotel_id
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    else if (hotels.length === 0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
+    else {
+      let reserve = new func.Reserve()
+      reserve.hotelId = req.params.hotel_id
+      reserve.userId = req.params.user_id
+      reserve.sDate = req.params.sdate
+      reserve.fDate = req.params.fdate
+      reserve.save((err, Reserve) => {
+        if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+        else res.status(200).send({ _id: Reserve['_id'] })
+      })
+    }
   })
 })
 
