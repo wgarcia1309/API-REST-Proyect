@@ -31,13 +31,13 @@ app.get('/api/new_user/:email-:password-:name-:lastname-:address', (req, res) =>
 
 // actualizacion de un usuario
 app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
-  let id=req.params.id;
-  func.User.update({_id:id}, {
-      password: req.params.newpassword,
-      address: req.params.newadd
+  func.User.update({ _id: req.params.id }, {
+    password: req.params.newpassword,
+    address: req.params.newadd
   }, (err, users) => {
-    if (err) return res.status(500).send({"value":0, message: `Error al realizar la peticion ${err}` })
-    res.status(200).send({"value":1})
+    if (err) return res.status(500).send({ value: 0, message: `Error al realizar la peticion ${err}` })
+    if (users.n === 0) return res.status(404).send({ value: 0, message: `File no found` })
+    res.status(200).send({ value: 1 })
   })
 })
 //Hacer una reservación
@@ -54,6 +54,7 @@ app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
     reserve.sDate = req.params.sdate
     reserve.fDate = req.params.fdate
 
+<<<<<<< HEAD
     reserve.save((err, Reserve) => {
       if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
       res.status(200).send({ _id: Reserve['_id'] })
@@ -64,6 +65,8 @@ app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
 
 
 
+=======
+>>>>>>> 5b2ab6055e4fcafa0d1d36cb084d674aac781a56
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   func.Hotel.find({
     name: { $regex: req.params.name, $options: 'i' },

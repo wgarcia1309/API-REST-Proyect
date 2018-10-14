@@ -49,6 +49,20 @@ UserSchema.pre('save', function (next) {
   })
 })
 
+UserSchema.pre('update', function (next) {
+  let user = this
+  bcrypt.genSalt(10, (err, salt) => {
+    if (err) return next(err)
+
+    bcrypt.hash(user._update['password'], salt, null, (err, hash) => {
+      if (err) return next(err)
+
+      user._update['password'] = hash
+      next()
+    })
+  })
+})
+
 let Hotel = mongoose.model('Hotel', HotelSchema)
 let User = mongoose.model('User', UserSchema)
 let Reserve = mongoose.model('Reserve', ReserveSchema)
