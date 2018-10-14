@@ -40,7 +40,27 @@ app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
     res.status(200).send({"value":1})
   })
 })
+//Hacer una reservación
+app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
+  func.Hotel.find({
+    _id: req.params.hotel_id
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    if (hotels.length==0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
 
+    let reserve = new func.Reserve()
+    reserve.hotelId = req.params.hotel_id
+    reserve.userId = req.params.user_id
+    reserve.sDate = req.params.sdate
+    reserve.fDate = req.params.fdate
+
+    reserve.save((err, Reserve) => {
+      if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+      res.status(200).send({ _id: Reserve['_id'] })
+    })
+
+  })
+})
 
 
 
