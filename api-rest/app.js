@@ -31,19 +31,17 @@ app.get('/api/new_user/:email-:password-:name-:lastname-:address', (req, res) =>
 
 // actualizacion de un usuario
 app.get('/api/update_user/:id-:newpassword-:newadd', (req, res) => {
-  let id=req.params.id;
-  func.User.update({_id:id}, {
-      password: req.params.newpassword,
-      address: req.params.newadd
+  let id = req.params.id
+  func.User.update({ _id: id }, {
+    password: req.params.newpassword,
+    address: req.params.newadd
   }, (err, users) => {
-    if (err) return res.status(500).send({"value":0, message: `Error al realizar la peticion ${err}` })
-    res.status(200).send({"value":1})
+    if (err) return res.status(500).send({ 'value': 0, message: `Error al realizar la peticion ${err}` })
+    res.status(200).send({ 'value': 1 })
   })
 })
 
-
-
-
+// busqueda de hotel por nombre,estado y tipo
 app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   func.Hotel.find({
     name: { $regex: req.params.name, $options: 'i' },
@@ -56,12 +54,53 @@ app.get('/api/HOTEL_NAME/:name-:state-:type-:size', (req, res) => {
   })
 })
 
-app.put('/api/HOTEL_NAME/:name', (req, res) => {
-
+// creacion de un hotel
+app.get('/api/new_hotel/:nam-:add-:lat-:lon-:state-:pho-:fax-:ema-:web-:typ-:room-:siz', (req, res) => {
+  let hotel = new func.Hotel()
+  hotel.name = req.params.nam
+  hotel.address = req.params.add
+  hotel.latitude = req.params.lat
+  hotel.longitude = req.params.lon
+  hotel.state = req.params.state
+  hotel.phone = req.params.pho
+  hotel.fax = req.params.fax
+  hotel.email = req.params.ema
+  hotel.website = req.params.web
+  hotel.type = req.params.typ
+  hotel.room = req.params.room
+  hotel.size = req.params.siz
+  hotel.save((err, Hotel) => {
+    if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+    res.status(200).send({ _id: Hotel['_id'] })
+  })
 })
 
-app.delete('/api/HOTEL_NAME/:name', (req, res) => {
+// Actualizacion de un hotel
+app.get('/api/update_hotel/:id-:htype-:rooms-:phone-:web-:email', (req, res) => {
+  let id = req.params.id
+  func.Hotel.update({ _id: id }, {
+    phone: req.params.phone,
+    email: req.params.email,
+    website: req.params.web,
+    type: req.params.htype,
+    room: req.params.rooms
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+    res.status(200).send({ 'value': 1 })
+  })
+})
 
+// Eliminacion de hotel
+app.get('/api/DEL_HOTEL/:id', (req, res) => {
+  let id = req.params.id
+  func.Hotel.deleteOne({
+    _id: id
+  }, (err, hotels) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+    else res.status(200).send({ message: 'Hotel eliminado' })
+  })
 })
 
 module.exports = app
