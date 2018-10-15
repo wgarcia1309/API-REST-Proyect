@@ -80,11 +80,11 @@ app.post('/api/reserve/', (req, res) => {
   })
 })
 
-app.post('/api/reserve/', (req, res) => {
+app.post('/api/new_Key/', (req, res) => {
   let apiKey = new func.ApiKey()
   apiKey.contact_name = req.body.contact_name
   apiKey.company = req.body.company
-  apiKey.email = req.body.apiKey
+  apiKey.email = req.body.email
 
   apiKey.save((err, apik) => {
     if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
