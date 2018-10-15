@@ -17,11 +17,11 @@ app.get('/api/xlsx2j', (req, res) => {
 // creacion de un nuevo usuario
 app.post('/api/new_user/', (req, res) => {
   let user = new func.User()
-  user.email = req.query.email
-  user.password = req.query.password
-  user.name = req.query.name
-  user.lastname = req.query.lastname
-  user.address = req.query.address
+  user.email = req.body.email
+  user.password = req.body.password
+  user.name = req.body.name
+  user.lastname = req.body.lastname
+  user.address = req.body.address
 
   user.save((err, User) => {
     if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
@@ -31,9 +31,9 @@ app.post('/api/new_user/', (req, res) => {
 
 // actualizacion de un usuario
 app.post('/api/update_user/', (req, res) => {
-  func.User.update({ _id: req.query.id }, {
-    password: req.query.newpassword,
-    address: req.query.newadd
+  func.User.update({ _id: req.body.id }, {
+    password: req.body.newpassword,
+    address: req.body.newadd
   }, (err, users) => {
     if (err) return res.status(500).send({ value: 0, message: `Error al realizar la peticion ${err}` })
     if (users.n === 0) return res.status(404).send({ value: 0, message: `File no found` })
@@ -80,6 +80,7 @@ app.post('/api/reserve/', (req, res) => {
   })
 })
 
+// Creacion de key
 app.post('/api/new_Key/', (req, res) => {
   let apiKey = new func.ApiKey()
   apiKey.contact_name = req.body.contact_name
@@ -98,7 +99,7 @@ app.get('/api/HOTEL_NAME/', (req, res) => {
     name: { $regex: req.query.name, $options: 'i' },
     state: { $regex: req.query.state, $options: 'i' },
     type: { $regex: req.query.type, $options: 'i' },
-    size: { $regex: req.query.size, $options: 'i' }
+    size: { $regex: req.body.size, $options: 'i' }
   }, (err, hotels) => {
     if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
     res.status(200).send({ hotels })
@@ -107,50 +108,62 @@ app.get('/api/HOTEL_NAME/', (req, res) => {
 
 // creacion de un hotel
 app.post('/api/new_hotel/', (req, res) => {
-  let hotel = new func.Hotel()
-  hotel.name = req.query.nam
-  hotel.address = req.query.add
-  hotel.latitude = req.query.lat
-  hotel.longitude = req.query.lon
-  hotel.state = req.query.state
-  hotel.phone = req.query.pho
-  hotel.fax = req.query.fax
-  hotel.email = req.query.ema
-  hotel.website = req.query.web
-  hotel.type = req.query.typ
-  hotel.room = req.query.room
-  hotel.size = req.query.siz
-  hotel.save((err, Hotel) => {
-    if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
-    res.status(200).send({ _id: Hotel['_id'] })
+  func.ApiKey.find({ _id: req.body.apikey }, (err, keys) => {
+    if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+    if (keys.length == 0) return res.status(404).send({ message: 'Api key no existe' })
+    let hotel = new func.Hotel()
+    hotel.name = req.body.nam
+    hotel.address = req.body.add
+    hotel.latitude = req.body.lat
+    hotel.longitude = req.body.lon
+    hotel.state = req.body.state
+    hotel.phone = req.body.pho
+    hotel.fax = req.body.fax
+    hotel.email = req.body.ema
+    hotel.website = req.body.web
+    hotel.type = req.body.typ
+    hotel.room = req.body.room
+    hotel.size = req.body.siz
+    hotel.save((err, Hotel) => {
+      if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+      res.status(200).send({ _id: Hotel['_id'] })
+    })
   })
 })
 
 // Actualizacion de un hotel
 app.post('/api/update_hotel/', (req, res) => {
-  let id = req.query.id
-  func.Hotel.update({ _id: id }, {
-    phone: req.query.phone,
-    email: req.query.email,
-    website: req.query.web,
-    type: req.query.htype,
-    room: req.query.rooms
-  }, (err, hotels) => {
+  func.ApiKey.find({ _id: req.body.apikey }, (err, keys) => {
     if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
-    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
-    res.status(200).send({ 'value': 1 })
+    if (keys.length === 0) return res.status(404).send({ message: 'Api key no existe' })
+    let id = req.body.id
+    func.Hotel.update({ _id: id }, {
+      phone: req.body.phone,
+      email: req.body.email,
+      website: req.body.web,
+      type: req.body.htype,
+      room: req.body.rooms
+    }, (err, hotels) => {
+      if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+      else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+      res.status(200).send({ 'value': 1 })
+    })
   })
 })
 
 // Eliminacion de hotel
 app.delete('/api/DEL_HOTEL/', (req, res) => {
-  let id = req.query.id
-  func.Hotel.deleteOne({
-    _id: id
-  }, (err, hotels) => {
+  func.ApiKey.find({ _id: req.body.apikey }, (err, keys) => {
     if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
-    else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
-    else res.status(200).send({ message: 'Hotel eliminado' })
+    if (keys.length === 0) return res.status(404).send({ message: 'Api key no existe' })
+    func.Hotel.deleteOne({
+      _id: req.body.id
+    }, (err, hotels) => {
+      console.log(hotels)
+      if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+      else if (hotels.n === 0) return res.status(404).send({ message: 'El ID del hotel no existe' })
+      else res.status(200).send({ message: 'Hotel eliminado' })
+    })
   })
 })
 
