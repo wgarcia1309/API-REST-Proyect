@@ -22,7 +22,7 @@ function charge (res) {
       email: hotel['EMAIL ID'],
       website: hotel['WEBSITE'],
       type: hotel['TYPE'],
-      room: hotel['Rooms'],
+      room: parseInt(hotel['Rooms']),
       size: size
     })
   }
@@ -41,10 +41,35 @@ function xlsx2j (res) {
   })
 }
 
+function val (sdate, fdate, Troom, Rroom, res) {
+  return new Promise(() => {
+    var sw = true
+    if ((sdate - fdate) > 0) return res.status(500).send({ message: `Error la fecha final esta antes de la inicial  ${err}` })
+    let today = new Date(sdate.getTime())
+    var i = 0
+    while (i < -1 * ((sdate - fdate) / 86400000) && sw === true) {
+      Reserve.find({ sDate: { $lte: today } }, (err, users) => {
+        if (err) return res.status(500).send({ message: `Error al buscar  ${err}` })
+        let Aroom = users.length
+        console.log(parseInt(Aroom) + parseInt(Rroom))
+        console.log(Troom)
+        if (Troom < Aroom + parseInt(Rroom)) {
+          sw = false
+          console.log(sw)
+        }
+      })
+      today.setDate(today.getDate() + 1)
+      i++
+    }
+    console.log('????')
+  }).then(console.log('yes'), console.log('no'))
+}
+
 module.exports = {
   charge,
   xlsx2j,
   Hotel,
   User,
-  Reserve
+  Reserve,
+  val
 }

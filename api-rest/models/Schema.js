@@ -27,10 +27,17 @@ const UserSchema = Schema({
 })
 
 const ReserveSchema = Schema({
-  hotelId: String,
-  userId: String,
+  hotel_id: String,
+  user_id: String,
   sDate: Date,
-  fDate: Date
+  fDate: Date,
+  nroom: Number
+})
+
+const ApiKeySchema = Schema({
+  contact_name: String,
+  company: String,
+  email: String
 })
 
 UserSchema.pre('save', function (next) {
@@ -66,4 +73,5 @@ UserSchema.pre('update', function (next) {
 let Hotel = mongoose.model('Hotel', HotelSchema)
 let User = mongoose.model('User', UserSchema)
 let Reserve = mongoose.model('Reserve', ReserveSchema)
-module.exports = { Hotel, User, Reserve }
+let ApiKey = mongoose.model('ApiKeySchema', ReserveSchema)
+module.exports = { Hotel, User, Reserve, ApiKey }

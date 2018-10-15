@@ -41,24 +41,54 @@ app.post('/api/update_user/', (req, res) => {
   })
 })
 
-// Hacer una reservación
-app.get('/api/reserve/:hotel_id-:user_id-:sdate-:fdate', (req, res) => {
+//  Hacer una reservación
+app.post('/api/reserve/', (req, res) => {
   func.Hotel.find({
-    _id: req.query.hotel_id
+    _id: req.body.hotel_id
   }, (err, hotels) => {
     if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
-    else if (hotels.length === 0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
-    else {
-      let reserve = new func.Reserve()
-      reserve.hotelId = req.query.hotel_id
-      reserve.userId = req.query.user_id
-      reserve.sDate = req.query.sdate
-      reserve.fDate = req.query.fdate
-      reserve.save((err, Reserve) => {
-        if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
-        else res.status(200).send({ _id: Reserve['_id'] })
-      })
-    }
+    if (hotels.length === 0) return res.status(500).send({ message: `No existe un hotel con ese Id` })
+    func.User.find({
+      _id: req.body.user_id
+    }, (err, users) => {
+      if (err) return res.status(500).send({ message: `Error al realizar la peticion ${err}` })
+      if (users.length === 0) return res.status(500).send({ message: `No existe un usuario con ese Id` })
+      //  funcion validadora
+
+      myFuncion()
+      async function myFuncion () {
+        try {
+          let wait = await func.val(new Date(req.body.sdate), new Date(req.body.fdate), hotels[0].room, req.body.nroom, res)
+          console.log(wait)
+          if (wait) {
+            let reserve = new func.Reserve()
+            reserve.hotel_id = req.body.hotel_id
+            reserve.user_id = req.body.user_id
+            reserve.sDate = new Date(req.body.sdate)
+            reserve.fDate = new Date(req.body.fdate)
+            reserve.nroom = req.body.nroom
+            reserve.save((err, Reserve) => {
+              if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+              res.status(200).send({ _id: Reserve['_id'] })
+            })
+          } else { if (err) return res.status(500).send({ message: `No hay habitaciones disponibles en esas fechas ${err}` }) }
+        } catch (err) {
+          console.log(':c')
+        }
+      }
+    })
+  })
+})
+
+app.post('/api/reserve/', (req, res) => {
+  let apiKey = new func.ApiKey()
+  apiKey.contact_name = req.body.contact_name
+  apiKey.company = req.body.company
+  apiKey.email = req.body.apiKey
+
+  apiKey.save((err, apik) => {
+    if (err) return res.status(500).send({ message: `Error al salvar la base de datos ${err}` })
+    res.status(200).send({ _id: apik['_id'] })
   })
 })
 
