@@ -1,6 +1,7 @@
 const Hotel = require('../models/Schema').Hotel
 const User = require('../models/Schema').User
 const Reserve = require('../models/Schema').Reserve
+const ApiKey = require('../models/Schema').ApiKey
 function charge (res) {
   let jsonObj = require('../files/output.json')
   jsonObj.forEach((hotel) => {
@@ -71,5 +72,6 @@ module.exports = {
   Hotel,
   User,
   Reserve,
-  val
+  val,
+  ApiKey
 }

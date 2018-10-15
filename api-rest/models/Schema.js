@@ -73,5 +73,5 @@ UserSchema.pre('update', function (next) {
 let Hotel = mongoose.model('Hotel', HotelSchema)
 let User = mongoose.model('User', UserSchema)
 let Reserve = mongoose.model('Reserve', ReserveSchema)
-let ApiKey = mongoose.model('ApiKeySchema', ReserveSchema)
+let ApiKey = mongoose.model('ApiKey', ApiKeySchema)
 module.exports = { Hotel, User, Reserve, ApiKey }
